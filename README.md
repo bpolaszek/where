@@ -116,6 +116,35 @@ LIMIT 10;
 
 Let your favorite IDE do the rest with autocompletion.
 
+RulerZ
+------
+**Where** is mostly compatible with the awesome [RulerZ](https://github.com/K-Phoen/rulerz) DSL.
+
+Be sure to `group` your statements to avoid downside effects.
+
+Example:
+
+```php
+use function BenTools\Where\group;
+use function BenTools\Where\not;
+
+$fruits = [
+    'banana',
+    'apple',
+];
+
+$colors = [
+    'yellow',
+    'red',
+];
+
+$condition = group('fruit IN :fruits', ['fruits' => $fruits])->and(group('color IN :colors', ['colors' => $colors]));
+$condition = not($condition);
+
+var_dump($rulerz->satisfies(['fruit' => 'strawberry', 'color' => 'red'], (string) $condition, $condition->getValues())); // true
+var_dump($rulerz->satisfies(['fruit' => 'apple', 'color' => 'yellow'], (string) $condition, $condition->getValues())); // false
+```
+
 Installation
 ----------------
 > composer require bentools/where
