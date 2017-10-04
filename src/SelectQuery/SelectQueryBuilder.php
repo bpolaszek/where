@@ -19,6 +19,7 @@ use BenTools\Where\Expression\Expression;
  * @property $orderBy
  * @property $limit
  * @property $offset
+ * @property $end
  */
 final class SelectQueryBuilder
 {
@@ -76,6 +77,11 @@ final class SelectQueryBuilder
      * @var int
      */
     private $offset;
+
+    /**
+     * @var string
+     */
+    private $end = ';';
 
     /**
      * @param Expression[]|string[] ...$columns
@@ -513,6 +519,17 @@ final class SelectQueryBuilder
     {
         $clone = clone $this;
         $clone->offset = $offset;
+        return $clone;
+    }
+
+    /**
+     * @param string|null $end
+     * @return SelectQueryBuilder
+     */
+    public function end(string $end = null): self
+    {
+        $clone = clone $this;
+        $clone->end = $end;
         return $clone;
     }
 

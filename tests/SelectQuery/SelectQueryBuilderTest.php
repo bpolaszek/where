@@ -259,6 +259,16 @@ class SelectQueryBuilderTest extends TestCase
         $this->assertEquals('SELECT * FROM foos LIMIT 10;', (string) $query);
     }
 
+    public function testEnd()
+    {
+        $query = select(1);
+        $this->assertEquals('SELECT 1;', (string) $query);
+        $query = $query->end();
+        $this->assertEquals('SELECT 1', (string) $query);
+        $query = $query->end('||');
+        $this->assertEquals('SELECT 1||', (string) $query);
+    }
+
     public function testValues()
     {
         $query = select()

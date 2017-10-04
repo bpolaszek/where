@@ -139,6 +139,6 @@ final class SelectQueryStringifier
         self::buildOrderBy($query, $parts);
         self::buildLimit($query, $parts);
         self::buildOffset($query, $parts);
-        return implode(' ', $parts) . ';';
+        return implode(' ', $parts) . $query->end;
     }
 }
