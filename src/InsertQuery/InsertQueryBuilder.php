@@ -63,19 +63,38 @@ final class InsertQueryBuilder
     /**
      * @param array[] ...$values
      * @return InsertQueryBuilder
-     * @throws \InvalidArgumentException
      */
     public static function load(array ...$values): self
     {
-        if (0 === count($values)) {
-            throw new \InvalidArgumentException("At least 1 value is needed.");
-        }
-
         $query = new self;
         foreach ($values as $value) {
             $query->values[] = $query->validateValue($value);
         }
         return $query;
+    }
+
+    /**
+     * @param array[] ...$values
+     * @return InsertQueryBuilder
+     */
+    public function withValues(array ...$values): self
+    {
+        $clone = clone $this;
+        $clone->values = $values;
+        return $clone;
+    }
+
+    /**
+     * @param array[] ...$values
+     * @return InsertQueryBuilder
+     */
+    public function and(array ...$values): self
+    {
+        $clone = clone $this;
+        foreach ($values as $value) {
+            $clone->values[] = $value;
+        }
+        return $clone;
     }
 
     /**

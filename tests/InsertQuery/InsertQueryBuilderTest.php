@@ -18,6 +18,23 @@ class InsertQueryBuilderTest extends TestCase
         $this->assertEquals([1, 'foo', 2, 'bar'], $query->getValues());
     }
 
+    public function testValues()
+    {
+        $query = insert()->into('foos');
+
+        $query = $query->withValues(['id' => 1, 'name' => 'foo']);
+        $this->assertEquals("INSERT INTO foos (id, name) VALUES (?, ?);", (string) $query);
+        $this->assertEquals([1, 'foo'], $query->getValues());
+
+        $query = $query->withValues(['id' => 2, 'name' => 'bar']);
+        $this->assertEquals("INSERT INTO foos (id, name) VALUES (?, ?);", (string) $query);
+        $this->assertEquals([2, 'bar'], $query->getValues());
+
+        $query = $query->and(['id' => 1, 'name' => 'foo']);
+        $this->assertEquals("INSERT INTO foos (id, name) VALUES (?, ?), (?, ?);", (string) $query);
+        $this->assertEquals([2, 'bar', 1, 'foo'], $query->getValues());
+    }
+
     public function testFlagsAndKeyword()
     {
         $query = insert(['id' => 1, 'name' => 'foo'])
