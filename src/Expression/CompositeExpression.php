@@ -31,7 +31,7 @@ final class CompositeExpression extends Expression
      */
     public function __toString(): string
     {
-        return implode(" {$this->operator} ", array_map(function (Expression $expression) {
+        return implode("{$this->operator}", array_map(function (Expression $expression) {
             return (string) $expression;
         }, $this->expressions));
     }

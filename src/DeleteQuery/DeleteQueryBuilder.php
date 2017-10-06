@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 
-namespace BenTools\Where\SelectQuery;
+namespace BenTools\Where\DeleteQuery;
 
 use BenTools\Where\Expression\Expression;
 use function BenTools\Where\valuesOf;
@@ -11,25 +10,22 @@ use function BenTools\Where\valuesOf;
  *
  * @property $mainKeyword
  * @property $flags
- * @property $distinct
- * @property $columns
+ * @property $tables
  * @property $from
  * @property $joins
+ * @property $partitions
  * @property $where
- * @property $groupBy
- * @property $having
  * @property $orderBy
  * @property $limit
- * @property $offset
  * @property $end
  */
-final class SelectQueryBuilder
+final class DeleteQueryBuilder
 {
 
     /**
      * @var string
      */
-    private $mainKeyword = 'SELECT';
+    private $mainKeyword = 'DELETE';
 
     /**
      * @var array
@@ -37,19 +33,19 @@ final class SelectQueryBuilder
     private $flags = [];
 
     /**
-     * @var bool
-     */
-    private $distinct = false;
-
-    /**
      * @var array
      */
-    private $columns = ['*'];
+    private $tables = [];
 
     /**
      * @var string
      */
     private $from;
+
+    /**
+     * @var array
+     */
+    private $partitions = [];
 
     /**
      * @var array
@@ -64,16 +60,6 @@ final class SelectQueryBuilder
     /**
      * @var array
      */
-    private $groupBy = [];
-
-    /**
-     * @var Expression
-     */
-    private $having;
-
-    /**
-     * @var array
-     */
     private $orderBy = [];
 
     /**
@@ -82,50 +68,26 @@ final class SelectQueryBuilder
     private $limit;
 
     /**
-     * @var int
-     */
-    private $offset;
-
-    /**
      * @var string
      */
     private $end = ';';
 
     /**
-     * @param Expression[]|string[] ...$columns
-     * @return SelectQueryBuilder
+     * @param Expression[]|string[] ...$tables
+     * @return DeleteQueryBuilder
      */
-    public static function make(...$columns): self
+    public static function make(...$tables): self
     {
-        $select = new self;
+        $query = new self;
         if (0 !== func_num_args()) {
-            $select->validateColumns(...$columns);
-            $select->columns = $columns;
+            $query->tables = $tables;
         }
-        return $select;
-    }
-
-    /**
-     * @param Expression[]|string[] ...$columns
-     * @throws \InvalidArgumentException
-     */
-    private function validateColumns(...$columns)
-    {
-        foreach ($columns as $column) {
-            if (!($column instanceof Expression || is_scalar($column))) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        "Expected string or Expression, got %s",
-                        is_object($column) ? get_class($column) : gettype($column)
-                    )
-                );
-            }
-        }
+        return $query;
     }
 
     /**
      * @param string $keyword
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function withMainKeyword(string $keyword): self
     {
@@ -135,32 +97,19 @@ final class SelectQueryBuilder
     }
 
     /**
-     * @param Expression[]|string[] ...$columns
-     * @return SelectQueryBuilder
+     * @param Expression[]|string[] ...$tables
+     * @return DeleteQueryBuilder
      */
-    public function withColumns(...$columns): self
+    public function deleteOnlyFromTables(...$tables): self
     {
-        $this->validateColumns(...$columns);
         $clone = clone $this;
-        $clone->columns = $columns;
-        return $clone;
-    }
-
-    /**
-     * @param Expression[]|string[] ...$columns
-     * @return SelectQueryBuilder
-     */
-    public function withAddedColumns(...$columns): self
-    {
-        $this->validateColumns(...$columns);
-        $clone = clone $this;
-        $clone->columns = array_merge($clone->columns, $columns);
+        $clone->tables = $tables;
         return $clone;
     }
 
     /**
      * @param string[] ...$flags
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function withFlags(string ...$flags): self
     {
@@ -171,7 +120,7 @@ final class SelectQueryBuilder
 
     /**
      * @param string[] ...$flags
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function withAddedFlags(string ...$flags): self
     {
@@ -186,19 +135,8 @@ final class SelectQueryBuilder
     }
 
     /**
-     * @param bool $distinct
-     * @return SelectQueryBuilder
-     */
-    public function distinct(bool $distinct = true): self
-    {
-        $clone = clone $this;
-        $clone->distinct = $distinct;
-        return $clone;
-    }
-
-    /**
      * @param string $table
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function from(string $table = null): self
     {
@@ -208,10 +146,36 @@ final class SelectQueryBuilder
     }
 
     /**
+     * @param string[] ...$partitions
+     * @return DeleteQueryBuilder
+     */
+    public function withPartitions(string ...$partitions): self
+    {
+        $clone = clone $this;
+        $clone->partitions = $partitions;
+        return $clone;
+    }
+
+    /**
+     * @param string[] ...$partitions
+     * @return DeleteQueryBuilder
+     */
+    public function withAddedPartitions(string ...$partitions): self
+    {
+        $clone = clone $this;
+        foreach ($partitions as $partition) {
+            if (!in_array($partition, $clone->partitions, true)) {
+                $clone->partitions[] = $partition;
+            }
+        }
+        return $clone;
+    }
+
+    /**
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function join(string $table, $expression = null, ...$values): self
@@ -228,7 +192,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function innerJoin(string $table, $expression = null, ...$values): self
@@ -245,7 +209,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function outerJoin(string $table, $expression = null, ...$values): self
@@ -262,7 +226,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function leftJoin(string $table, $expression = null, ...$values): self
@@ -279,7 +243,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function leftOuterJoin(string $table, $expression = null, ...$values): self
@@ -296,7 +260,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function rightJoin(string $table, $expression = null, ...$values): self
@@ -313,7 +277,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function rightOuterJoin(string $table, $expression = null, ...$values): self
@@ -330,7 +294,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function fullJoin(string $table, $expression = null, ...$values): self
@@ -347,7 +311,7 @@ final class SelectQueryBuilder
      * @param string                 $table
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function fullOuterJoin(string $table, $expression = null, ...$values): self
@@ -363,7 +327,7 @@ final class SelectQueryBuilder
     /**
      * Reset all JOIN clauses.
      *
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function resetJoins(): self
     {
@@ -376,7 +340,7 @@ final class SelectQueryBuilder
      * Remove a specific JOIN clause.
      *
      * @param string $table
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function withoutJoin(string $table)
     {
@@ -388,7 +352,7 @@ final class SelectQueryBuilder
     /**
      * @param string|Expression|null $expression
      * @param array                  ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function where($expression = null, ...$values): self
@@ -401,7 +365,7 @@ final class SelectQueryBuilder
     /**
      * @param string|Expression $expression
      * @param array             ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function andWhere($expression, ...$values): self
@@ -417,7 +381,7 @@ final class SelectQueryBuilder
     /**
      * @param string|Expression $expression
      * @param array             ...$values
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      * @throws \InvalidArgumentException
      */
     public function orWhere($expression, ...$values): self
@@ -432,74 +396,7 @@ final class SelectQueryBuilder
 
     /**
      * @param string[] ...$groupBy
-     * @return SelectQueryBuilder
-     */
-    public function groupBy(string ...$groupBy): self
-    {
-        $clone = clone $this;
-        $clone->groupBy = $groupBy;
-        return $clone;
-    }
-
-    /**
-     * @param string[] ...$groupBy
-     * @return SelectQueryBuilder
-     */
-    public function andGroupBy(string ...$groupBy): self
-    {
-        $clone = clone $this;
-        $clone->groupBy = array_merge($clone->groupBy, $groupBy);
-        return $clone;
-    }
-
-    /**
-     * @param string|Expression|null $expression
-     * @param array                  ...$values
-     * @return SelectQueryBuilder
-     * @throws \InvalidArgumentException
-     */
-    public function having($expression = null, ...$values): self
-    {
-        $clone = clone $this;
-        $clone->having = null !== $expression ? Expression::where($expression, ...$values) : null;
-        return $clone;
-    }
-
-    /**
-     * @param string|Expression $expression
-     * @param array             ...$values
-     * @return SelectQueryBuilder
-     * @throws \InvalidArgumentException
-     */
-    public function andHaving($expression, ...$values): self
-    {
-        if (null === $this->having) {
-            return $this->having(Expression::where($expression, ...$values));
-        }
-        $clone = clone $this;
-        $clone->having = $clone->having->and(Expression::where($expression, ...$values));
-        return $clone;
-    }
-
-    /**
-     * @param string|Expression $expression
-     * @param array             ...$values
-     * @return SelectQueryBuilder
-     * @throws \InvalidArgumentException
-     */
-    public function orHaving($expression, ...$values): self
-    {
-        if (null === $this->having) {
-            return $this->having(Expression::where($expression, ...$values));
-        }
-        $clone = clone $this;
-        $clone->having = $clone->having->or(Expression::where($expression, ...$values));
-        return $clone;
-    }
-
-    /**
-     * @param string[] ...$groupBy
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function orderBy(string ...$orderBy): self
     {
@@ -510,7 +407,7 @@ final class SelectQueryBuilder
 
     /**
      * @param string[] ...$groupBy
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function andOrderBy(string ...$orderBy): self
     {
@@ -521,7 +418,7 @@ final class SelectQueryBuilder
 
     /**
      * @param int|null $limit
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function limit(int $limit = null): self
     {
@@ -531,19 +428,8 @@ final class SelectQueryBuilder
     }
 
     /**
-     * @param int|null $offset
-     * @return SelectQueryBuilder
-     */
-    public function offset(int $offset = null): self
-    {
-        $clone = clone $this;
-        $clone->offset = $offset;
-        return $clone;
-    }
-
-    /**
      * @param string|null $end
-     * @return SelectQueryBuilder
+     * @return DeleteQueryBuilder
      */
     public function end(string $end = null): self
     {
@@ -557,7 +443,7 @@ final class SelectQueryBuilder
      */
     public function getValues(): array
     {
-        $expressions = array_filter(array_merge($this->columns, array_column($this->joins, 'c'), [$this->where, $this->having]), function ($expression) {
+        $expressions = array_filter(array_merge(array_column($this->joins, 'c'), [$this->where]), function ($expression) {
             return $expression instanceof Expression;
         });
         return valuesOf(...$expressions);
@@ -568,7 +454,7 @@ final class SelectQueryBuilder
      */
     public function __toString(): string
     {
-        return SelectQueryStringifier::stringify($this);
+        return DeleteQueryStringifier::stringify($this);
     }
 
     /**

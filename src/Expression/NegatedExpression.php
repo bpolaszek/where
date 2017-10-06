@@ -8,7 +8,7 @@ final class NegatedExpression extends Expression
     /**
      * @var Expression
      */
-    private $expression;
+    protected $expression;
 
     /**
      * NegatedExpression constructor.

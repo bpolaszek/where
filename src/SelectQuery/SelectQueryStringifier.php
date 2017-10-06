@@ -11,7 +11,7 @@ final class SelectQueryStringifier
      */
     private static function initBuild(SelectQueryBuilder $query): array
     {
-        $parts = array_merge(['SELECT'], $query->flags);
+        $parts = array_merge([$query->mainKeyword], $query->flags);
 
         if (true === $query->distinct) {
             $parts[] = 'DISTINCT';

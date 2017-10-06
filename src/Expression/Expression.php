@@ -15,7 +15,7 @@ abstract class Expression
     final public function and($expression, ...$values): CompositeExpression
     {
         $expression = $this->where($expression, ...$values);
-        return new CompositeExpression('AND', $this, $expression);
+        return new CompositeExpression(' AND ', $this, $expression);
     }
 
     /**
@@ -27,7 +27,35 @@ abstract class Expression
     final public function or($expression, ...$values): CompositeExpression
     {
         $expression = $this->where($expression, ...$values);
-        return new CompositeExpression('OR', $this, $expression);
+        return new CompositeExpression(' OR ', $this, $expression);
+    }
+
+    /**
+     * @param       $expression
+     * @param array ...$values
+     * @return CompositeExpression
+     * @throws \InvalidArgumentException
+     */
+    final public function plus($expression, ...$values): CompositeExpression
+    {
+        $expression = $this->where($expression, ...$values);
+        return new CompositeExpression(', ', $this, $expression);
+    }
+
+    /**
+     * @return GroupExpression
+     */
+    final public function asGroup(): GroupExpression
+    {
+        return $this instanceof GroupExpression ? $this : new GroupExpression($this);
+    }
+
+    /**
+     * @return Expression|NegatedExpression
+     */
+    final public function negate(): Expression
+    {
+        return $this instanceof NegatedExpression ? clone $this->expression : new NegatedExpression($this);
     }
 
     /**
@@ -102,4 +130,24 @@ abstract class Expression
      * @return array
      */
     abstract public function getValues(): array;
+
+    /**
+     * @param Expression[] ...$expressions
+     * @return array
+     */
+    final public static function valuesOf(self ...$expressions): array
+    {
+        $generator = function (Expression ...$expressions) {
+            foreach ($expressions as $expression) {
+                foreach ($expression->getValues() as $key => $value) {
+                    if (is_numeric($key)) {
+                        yield $value;
+                    } else {
+                        yield $key => $value;
+                    }
+                }
+            }
+        };
+        return iterator_to_array($generator(...$expressions));
+    }
 }
