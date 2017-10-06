@@ -44,7 +44,7 @@ final class SelectQueryBuilder
     /**
      * @var array
      */
-    private $columns = ['*'];
+    private $columns = [];
 
     /**
      * @var string

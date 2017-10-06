@@ -12,7 +12,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testConstructor()
     {
-        $query = select();
+        $query = select('*');
         $this->assertEquals('SELECT *;', (string) $query);
         $this->assertEquals([], $query->getValues());
 
@@ -152,7 +152,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testWhere()
     {
-        $query = select()->from('foos')->where('foo = ?', 'bar');
+        $query = select('*')->from('foos')->where('foo = ?', 'bar');
         $this->assertEquals('SELECT * FROM foos WHERE foo = ?;', (string) $query);
         $this->assertEquals(['bar'], $query->getValues());
 
@@ -167,21 +167,21 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testAndWhere()
     {
-        $query = select()->from('foos')->andWhere('foo = ?', 'bar')->andWhere('baz = ?', 'bat');
+        $query = select('*')->from('foos')->andWhere('foo = ?', 'bar')->andWhere('baz = ?', 'bat');
         $this->assertEquals('SELECT * FROM foos WHERE foo = ? AND baz = ?;', (string) $query);
         $this->assertEquals(['bar', 'bat'], $query->getValues());
     }
 
     public function testOrWhere()
     {
-        $query = select()->from('foos')->andWhere('foo = ?', 'bar')->orWhere('baz = ?', 'bat');
+        $query = select('*')->from('foos')->andWhere('foo = ?', 'bar')->orWhere('baz = ?', 'bat');
         $this->assertEquals('SELECT * FROM foos WHERE foo = ? OR baz = ?;', (string) $query);
         $this->assertEquals(['bar', 'bat'], $query->getValues());
     }
 
     public function testGroupBy()
     {
-        $query = select()->from('foos')->groupBy('bar');
+        $query = select('*')->from('foos')->groupBy('bar');
         $this->assertEquals('SELECT * FROM foos GROUP BY bar;', (string) $query);
 
         $query = $query->groupBy('foo');
@@ -190,7 +190,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testAndGroupBy()
     {
-        $query = select()->from('foos')->groupBy('bar');
+        $query = select('*')->from('foos')->groupBy('bar');
         $this->assertEquals('SELECT * FROM foos GROUP BY bar;', (string) $query);
 
         $query = $query->andGroupBy('foo');
@@ -199,7 +199,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testHaving()
     {
-        $query = select()->from('foos')->having('foo = ?', 'bar');
+        $query = select('*')->from('foos')->having('foo = ?', 'bar');
         $this->assertEquals('SELECT * FROM foos HAVING foo = ?;', (string) $query);
         $this->assertEquals(['bar'], $query->getValues());
 
@@ -214,21 +214,21 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testAndHaving()
     {
-        $query = select()->from('foos')->andHaving('foo = ?', 'bar')->andHaving('baz = ?', 'bat');
+        $query = select('*')->from('foos')->andHaving('foo = ?', 'bar')->andHaving('baz = ?', 'bat');
         $this->assertEquals('SELECT * FROM foos HAVING foo = ? AND baz = ?;', (string) $query);
         $this->assertEquals(['bar', 'bat'], $query->getValues());
     }
 
     public function testOrHaving()
     {
-        $query = select()->from('foos')->andHaving('foo = ?', 'bar')->orHaving('baz = ?', 'bat');
+        $query = select('*')->from('foos')->andHaving('foo = ?', 'bar')->orHaving('baz = ?', 'bat');
         $this->assertEquals('SELECT * FROM foos HAVING foo = ? OR baz = ?;', (string) $query);
         $this->assertEquals(['bar', 'bat'], $query->getValues());
     }
 
     public function testOrderBy()
     {
-        $query = select()->from('foos')->orderBy('bar');
+        $query = select('*')->from('foos')->orderBy('bar');
         $this->assertEquals('SELECT * FROM foos ORDER BY bar;', (string) $query);
 
         $query = $query->orderBy('foo DESC');
@@ -237,7 +237,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testAndOrderBy()
     {
-        $query = select()->from('foos')->orderBy('bar');
+        $query = select('*')->from('foos')->orderBy('bar');
         $this->assertEquals('SELECT * FROM foos ORDER BY bar;', (string) $query);
 
         $query = $query->andOrderBy('foo DESC');
@@ -246,7 +246,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testLimitOffset()
     {
-        $query = select()->from('foos')->limit(10);
+        $query = select('*')->from('foos')->limit(10);
         $this->assertEquals('SELECT * FROM foos LIMIT 10;', (string) $query);
 
         $query = $query->limit(null);
@@ -271,7 +271,7 @@ class SelectQueryBuilderTest extends TestCase
 
     public function testValues()
     {
-        $query = select()
+        $query = select('*')
             ->from('my_table as a')
             ->innerJoin('second_table as b', where('b.id = a.b_id')->and('b.foo = ?', 'bar'))
             ->leftJoin('third_table as c', 'c.range BETWEEN ? AND ?', 10000, 15000)
