@@ -2,7 +2,6 @@
 
 namespace BenTools\Where\Tests\DeleteQuery;
 
-
 use function BenTools\Where\delete;
 use function BenTools\Where\group;
 use function BenTools\Where\where;
@@ -193,7 +192,6 @@ class DeleteQueryBuilderTest extends TestCase
 
         $query = $query->limit(null);
         $this->assertEquals('DELETE FROM foos;', (string) $query);
-
     }
 
     public function testEnd()
@@ -224,4 +222,3 @@ class DeleteQueryBuilderTest extends TestCase
         $this->assertEquals($values, $query->getValues());
     }
 }
-

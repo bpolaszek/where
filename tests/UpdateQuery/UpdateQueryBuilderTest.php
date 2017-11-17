@@ -230,4 +230,3 @@ class UpdateQueryBuilderTest extends TestCase
         $this->assertEquals($values, $query->getValues());
     }
 }
-
