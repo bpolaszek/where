@@ -7,6 +7,7 @@ use BenTools\Where\Expression\Condition;
 use BenTools\Where\Expression\Expression;
 use BenTools\Where\Expression\GroupExpression;
 use BenTools\Where\Expression\NegatedExpression;
+use BenTools\Where\Helper\FieldHelper;
 use BenTools\Where\InsertQuery\InsertQueryBuilder;
 use BenTools\Where\SelectQuery\SelectQueryBuilder;
 use BenTools\Where\UpdateQuery\UpdateQueryBuilder;
@@ -84,4 +85,24 @@ function insert(array ...$values): InsertQueryBuilder
 function update(string $table): UpdateQueryBuilder
 {
     return UpdateQueryBuilder::make($table);
+}
+
+/**
+ * @param array  $values
+ * @param string $placeholder
+ * @param string $glue
+ * @return string
+ */
+function placeholders(array $values, string $placeholder = '?', string $glue = ', '): string
+{
+    return implode($glue, array_fill(0, count($values), $placeholder));
+}
+
+/**
+ * @param string $field
+ * @return FieldHelper
+ */
+function field(string $field): FieldHelper
+{
+    return new FieldHelper($field);
 }
