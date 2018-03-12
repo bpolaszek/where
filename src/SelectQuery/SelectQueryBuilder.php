@@ -394,6 +394,10 @@ final class SelectQueryBuilder
     public function where($expression = null, ...$values): self
     {
         $clone = clone $this;
+        if (1 === func_num_args() && null === func_get_arg(0)) {
+            $clone->where = null;
+            return $clone;
+        }
         $clone->where = null !== $expression ? Expression::where($expression, ...$values) : null;
         return $clone;
     }
@@ -434,9 +438,13 @@ final class SelectQueryBuilder
      * @param string[] ...$groupBy
      * @return SelectQueryBuilder
      */
-    public function groupBy(string ...$groupBy): self
+    public function groupBy(?string ...$groupBy): self
     {
         $clone = clone $this;
+        if (1 === func_num_args() && null === func_get_arg(0)) {
+            $clone->groupBy = [];
+            return $clone;
+        }
         $clone->groupBy = $groupBy;
         return $clone;
     }
@@ -461,6 +469,10 @@ final class SelectQueryBuilder
     public function having($expression = null, ...$values): self
     {
         $clone = clone $this;
+        if (1 === func_num_args() && null === func_get_arg(0)) {
+            $clone->having = null;
+            return $clone;
+        }
         $clone->having = null !== $expression ? Expression::where($expression, ...$values) : null;
         return $clone;
     }
@@ -501,9 +513,13 @@ final class SelectQueryBuilder
      * @param string[] ...$groupBy
      * @return SelectQueryBuilder
      */
-    public function orderBy(string ...$orderBy): self
+    public function orderBy(?string ...$orderBy): self
     {
         $clone = clone $this;
+        if (1 === func_num_args() && null === func_get_arg(0)) {
+            $clone->orderBy = [];
+            return $clone;
+        }
         $clone->orderBy = $orderBy;
         return $clone;
     }
@@ -561,6 +577,21 @@ final class SelectQueryBuilder
             return $expression instanceof Expression;
         });
         return valuesOf(...$expressions);
+    }
+
+    /**
+     * Split current query into multiple sub-queries (with OFFSET and LIMIT).
+     *
+     * @param int $buffer
+     * @param int $max
+     * @param int $offsetStart
+     * @return iterable|self[]
+     */
+    public function split(int $buffer, int $max, int $offsetStart = 0): iterable
+    {
+        for ($offset = $offsetStart; $offset < $max; $offset += $buffer) {
+            yield $offset => $this->offset($offset)->limit($buffer);
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ namespace BenTools\Where\Tests\SelectQuery;
 
 use function BenTools\Where\select;
 use function BenTools\Where\group;
+use BenTools\Where\SelectQuery\SelectQueryBuilder;
 use function BenTools\Where\where;
 use PHPUnit\Framework\TestCase;
 
@@ -186,6 +187,9 @@ class SelectQueryBuilderTest extends TestCase
 
         $query = $query->groupBy('foo');
         $this->assertEquals('SELECT * FROM foos GROUP BY foo;', (string) $query);
+
+        $query = $query->groupBy(null);
+        $this->assertEquals('SELECT * FROM foos;', (string) $query);
     }
 
     public function testAndGroupBy()
@@ -233,6 +237,9 @@ class SelectQueryBuilderTest extends TestCase
 
         $query = $query->orderBy('foo DESC');
         $this->assertEquals('SELECT * FROM foos ORDER BY foo DESC;', (string) $query);
+
+        $query = $query->orderBy(null);
+        $this->assertEquals('SELECT * FROM foos;', (string) $query);
     }
 
     public function testAndOrderBy()
@@ -287,5 +294,21 @@ class SelectQueryBuilderTest extends TestCase
             'baz'
         ];
         $this->assertEquals($values, $query->getValues());
+    }
+
+    public function testSplit()
+    {
+        $query = select('*')->from('foo');
+        $split = $query->split(10, 50);
+        $expected = [
+            0 => "SELECT * FROM foo LIMIT 10 OFFSET 0;",
+            10 => "SELECT * FROM foo LIMIT 10 OFFSET 10;",
+            20 => "SELECT * FROM foo LIMIT 10 OFFSET 20;",
+            30 => "SELECT * FROM foo LIMIT 10 OFFSET 30;",
+            40 => "SELECT * FROM foo LIMIT 10 OFFSET 40;",
+        ];
+        $this->assertEquals($expected, array_map(function (SelectQueryBuilder $query) {
+            return (string) $query;
+        }, iterator_to_array($split)));
     }
 }
