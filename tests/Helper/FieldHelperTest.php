@@ -17,6 +17,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name IN (?, ?)', (string) $expr);
         $this->assertEquals($values, $expr->getValues());
+
+        $expr = $field->in($values, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name IN (foo, bar)', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testNotIn()
@@ -27,6 +32,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name NOT IN (?, ?)', (string) $expr);
         $this->assertEquals($values, $expr->getValues());
+
+        $expr = $field->notIn($values, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name NOT IN (foo, bar)', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testEquals()
@@ -37,6 +47,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name = ?', (string) $expr);
         $this->assertEquals([$value], $expr->getValues());
+
+        $expr = $field->equals($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name = foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testNotEquals()
@@ -47,6 +62,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name <> ?', (string) $expr);
         $this->assertEquals([$value], $expr->getValues());
+
+        $expr = $field->notEquals($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name <> foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testLt()
@@ -57,6 +77,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name < ?', (string) $expr);
         $this->assertEquals([$value], $expr->getValues());
+
+        $expr = $field->lt($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name < foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testLte()
@@ -67,6 +92,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name <= ?', (string) $expr);
         $this->assertEquals([$value], $expr->getValues());
+
+        $expr = $field->lte($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name <= foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testGt()
@@ -77,6 +107,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name > ?', (string) $expr);
         $this->assertEquals([$value], $expr->getValues());
+
+        $expr = $field->gt($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name > foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testGte()
@@ -87,6 +122,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name >= ?', (string) $expr);
         $this->assertEquals([$value], $expr->getValues());
+
+        $expr = $field->gte($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name >= foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testBetween()
@@ -97,6 +137,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name BETWEEN ? AND ?', (string) $expr);
         $this->assertEquals($values, $expr->getValues());
+
+        $expr = $field->between('foo', 'bar', null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name BETWEEN foo AND bar', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testNotBetween()
@@ -107,6 +152,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name NOT BETWEEN ? AND ?', (string) $expr);
         $this->assertEquals($values, $expr->getValues());
+
+        $expr = $field->notBetween('foo', 'bar', null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name NOT BETWEEN foo AND bar', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testLike()
@@ -117,6 +167,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name LIKE ?', (string) $expr);
         $this->assertEquals(['%' . $value . '%'], $expr->getValues());
+
+        $expr = $field->like($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name LIKE %foo%', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testNotLike()
@@ -127,6 +182,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name NOT LIKE ?', (string) $expr);
         $this->assertEquals(['%' . $value . '%'], $expr->getValues());
+
+        $expr = $field->notLike($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name NOT LIKE %foo%', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testStartsWith()
@@ -137,6 +197,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name LIKE ?', (string) $expr);
         $this->assertEquals([$value . '%'], $expr->getValues());
+
+        $expr = $field->startsWith($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name LIKE foo%', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testNotStartsWith()
@@ -147,6 +212,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name NOT LIKE ?', (string) $expr);
         $this->assertEquals([$value . '%'], $expr->getValues());
+
+        $expr = $field->notStartsWith($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name NOT LIKE foo%', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testEndsWith()
@@ -157,6 +227,11 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name LIKE ?', (string) $expr);
         $this->assertEquals(['%' . $value], $expr->getValues());
+
+        $expr = $field->endsWith($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name LIKE %foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 
     public function testNotEndsWith()
@@ -167,5 +242,10 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('field_name NOT LIKE ?', (string) $expr);
         $this->assertEquals(['%' . $value], $expr->getValues());
+
+        $expr = $field->notEndsWith($value, null);
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('field_name NOT LIKE %foo', (string) $expr);
+        $this->assertEquals([], $expr->getValues());
     }
 }
