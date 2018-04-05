@@ -43,6 +43,18 @@ abstract class Expression
     }
 
     /**
+     * @param       $expression
+     * @param array ...$values
+     * @return CompositeExpression
+     * @throws \InvalidArgumentException
+     */
+    final public function as($expression, ...$values): CompositeExpression
+    {
+        $expression = $this->where($expression, ...$values);
+        return new CompositeExpression(' AS ', $this, $expression);
+    }
+
+    /**
      * @return GroupExpression
      */
     final public function asGroup(): GroupExpression
