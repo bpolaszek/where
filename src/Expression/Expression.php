@@ -66,7 +66,7 @@ abstract class Expression
      */
     final public static function where($expression, ...$values): self
     {
-        if (is_string($expression)) {
+        if (is_scalar($expression)) {
             return new Condition($expression, self::valuesFactory($values));
         }
         if ($expression instanceof self) {
