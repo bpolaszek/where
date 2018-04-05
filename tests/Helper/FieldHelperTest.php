@@ -9,6 +9,20 @@ use function BenTools\Where\field;
 class FieldHelperTest extends TestCase
 {
 
+    public function testIsNull()
+    {
+        $expr = field('foo')->isNull();
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('foo IS NULL', (string) $expr);
+    }
+
+    public function testIsNotNull()
+    {
+        $expr = field('foo')->isNotNull();
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('foo IS NOT NULL', (string) $expr);
+    }
+
     public function testIn()
     {
         $field = field('field_name');

@@ -9,7 +9,17 @@
 
 The simplest fluent SQL query builder ever.
 
-Built with PHP7.1 with immutability in mind.
+Built in PHP7.1 with immutability in mind.
+
+## Features
+
+* Framework agnostic, connection agnostic (you just render a string and an array of values)
+* Natural language: where, and, or, ...
+* Support named and numeric placeholders
+* Build complex, nested WHERE conditions
+* Helpers for building `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `REPLACE` queries
+* Helpers for SQL functions like `IN`, `BETWEEN`, `IS NULL`, `CASE ... WHEN`
+
 
 Conditions builder
 --------------------------

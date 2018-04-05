@@ -23,6 +23,24 @@ class FieldHelper
     }
 
     /**
+     * @return Expression
+     * @throws \InvalidArgumentException
+     */
+    public function isNull(): Expression
+    {
+        return where(sprintf('%s IS NULL', $this->field));
+    }
+
+    /**
+     * @return Expression
+     * @throws \InvalidArgumentException
+     */
+    public function isNotNull(): Expression
+    {
+        return where(sprintf('%s IS NOT NULL', $this->field));
+    }
+
+    /**
      * @param array       $values
      * @param null|string $placeholder
      * @param string      $glue
