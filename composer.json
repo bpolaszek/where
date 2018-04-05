@@ -1,7 +1,7 @@
 {
   "name" : "bentools/where",
-  "description": "PHP7.1 Fluent, immutable SQL query builder.",
-  "keywords": ["query builder", "sql", "mysql", "database", "select", "where", "conditions"],
+  "description": "PHP7.1 Fluent, immutable SQL query builder. Connectionless, framework-agnostic, no dependency.",
+  "keywords": ["query builder", "sql", "mysql", "database", "select", "where", "conditions", "insert", "update", "delete", "field", "case", "when", "then", "query", "builder"],
   "license": "MIT",
   "autoload": {
     "psr-4": {
@@ -17,8 +17,7 @@
     ]
   },
   "require": {
-    "php": "^7.1",
-    "bentools/flatten-iterator": "^1.0"
+    "php": "^7.1"
   },
   "require-dev": {
     "symfony/var-dumper": "^3.3",

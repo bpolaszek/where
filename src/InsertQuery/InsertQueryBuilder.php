@@ -249,22 +249,23 @@ final class InsertQueryBuilder
      */
     public function getValues(): array
     {
-        $generator = function (array $values, array $columns) {
-            foreach ($values as $value) {
+        $values = [[]];
+        $columns = $this->getColumns();
+        foreach ($this->values as $value) {
+            $valueKeys = array_keys($value);
+            if ($valueKeys !== $columns) {
+                $value = array_intersect_key($value, array_combine($columns, array_fill(0, count($columns), null)));
                 $valueKeys = array_keys($value);
                 if ($valueKeys !== $columns) {
-                    $value = array_intersect_key($value, array_combine($columns, array_fill(0, count($columns), null)));
-                    $valueKeys = array_keys($value);
-                    if ($valueKeys !== $columns) {
-                        uksort($value, function ($key1, $key2) use ($columns) {
-                            return array_search($key1, $columns) <=> array_search($key2, $columns);
-                        });
-                    }
+                    uksort($value, function ($key1, $key2) use ($columns) {
+                        return array_search($key1, $columns) <=> array_search($key2, $columns);
+                    });
                 }
-                yield $value;
             }
-        };
-        return flatten($generator($this->values, $this->getColumns()))->asArray();
+            $values[] = array_values($value);
+        }
+
+        return array_merge(...$values);
     }
 
     /**
