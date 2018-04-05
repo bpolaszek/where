@@ -7,6 +7,7 @@ use BenTools\Where\Expression\Condition;
 use BenTools\Where\Expression\Expression;
 use BenTools\Where\Expression\GroupExpression;
 use BenTools\Where\Expression\NegatedExpression;
+use BenTools\Where\Helper\CaseHelper;
 use BenTools\Where\Helper\FieldHelper;
 use BenTools\Where\InsertQuery\InsertQueryBuilder;
 use BenTools\Where\SelectQuery\SelectQueryBuilder;
@@ -105,4 +106,25 @@ function placeholders(array $values, string $placeholder = '?', string $glue = '
 function field(string $field): FieldHelper
 {
     return new FieldHelper($field);
+}
+
+/**
+ * @param null  $expression
+ * @param array ...$values
+ * @return CaseHelper
+ * @throws \InvalidArgumentException
+ */
+function conditionnal($expression = null, ...$values): CaseHelper
+{
+    return CaseHelper::create($expression, ...$values);
+}
+
+/**
+ * @param null  $expression
+ * @param array ...$values
+ * @return CaseHelper
+ */
+function when($expression = null, ...$values): CaseHelper
+{
+    return CaseHelper::create()->when($expression, ...$values);
 }
