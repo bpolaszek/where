@@ -20,6 +20,12 @@ Built in PHP7.1 with immutability in mind.
 * Helpers for building `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `REPLACE` queries
 * Helpers for SQL functions like `IN`, `BETWEEN`, `IS NULL`, `CASE ... WHEN`
 
+## Why?
+
+In most cases simple SQL queries are fine. 
+
+But if your application logic is designed in a way that several classes / methods can modify an SQL query (like the Visitor pattern), then you'll probably need query builder 
+(you can define LIMIT / OFFSET before WHERE for instance, and the query will be rendered in the correct order).
 
 Conditions builder
 --------------------------
