@@ -22,6 +22,19 @@ class FieldHelperTest extends TestCase
         $this->assertInstanceOf(Expression::class, $expr);
         $this->assertEquals('foo IS NOT NULL', (string) $expr);
     }
+    public function testIsTrue()
+    {
+        $expr = field('foo')->isTrue();
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('foo = TRUE', (string) $expr);
+    }
+
+    public function testIsFalse()
+    {
+        $expr = field('foo')->isFalse();
+        $this->assertInstanceOf(Expression::class, $expr);
+        $this->assertEquals('foo = FALSE', (string) $expr);
+    }
 
     public function testIn()
     {

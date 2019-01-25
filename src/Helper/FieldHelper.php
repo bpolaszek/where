@@ -41,6 +41,24 @@ class FieldHelper
     }
 
     /**
+     * @return Expression
+     * @throws \InvalidArgumentException
+     */
+    public function isTrue(): Expression
+    {
+        return where(sprintf('%s = TRUE', $this->field));
+    }
+
+    /**
+     * @return Expression
+     * @throws \InvalidArgumentException
+     */
+    public function isFalse(): Expression
+    {
+        return where(sprintf('%s = FALSE', $this->field));
+    }
+
+    /**
      * @param array       $values
      * @param null|string $placeholder
      * @param string      $glue
