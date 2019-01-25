@@ -7,7 +7,7 @@ use BenTools\Where\Expression\Expression;
 use function BenTools\Where\placeholders;
 use function BenTools\Where\where;
 
-class FieldHelper
+final class FieldHelper
 {
     /**
      * @var string
