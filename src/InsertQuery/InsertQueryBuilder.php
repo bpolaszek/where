@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace BenTools\Where\InsertQuery;
 
-use function BenTools\FlattenIterator\flatten;
-
 /**
  * Class InsertQueryBuilder
  *
