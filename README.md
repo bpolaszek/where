@@ -58,7 +58,7 @@ $where = where('country IN (?, ?)', ['FRA', 'UK'])
 
 print((string) $where);
 print_r($where->getValues());
-print_r($where->preview());
+print_r($where->preview());  // For debugging purposes
 ```
 Outputs:
 ```mysql
@@ -120,7 +120,7 @@ $select = select('b.id', 'b.name  AS book_name', 'a.name AS author_name')
         )
     );
 print_r((string) $select); // The SQL string
-print_r($select->preview()); // The SQL parameters to bind
+print_r($select->preview()); // For debugging purposes
 ```
 
 ```mysql
