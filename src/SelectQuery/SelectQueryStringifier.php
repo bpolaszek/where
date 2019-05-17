@@ -11,7 +11,7 @@ final class SelectQueryStringifier
      */
     private static function initBuild(SelectQueryBuilder $query): array
     {
-        $parts = array_merge([$query->mainKeyword], $query->flags);
+        $parts = \array_merge([$query->mainKeyword], $query->flags);
 
         if (true === $query->distinct) {
             $parts[] = 'DISTINCT';
@@ -26,7 +26,7 @@ final class SelectQueryStringifier
      */
     private static function buildColumns(SelectQueryBuilder $query, array &$parts)
     {
-        $parts = array_merge($parts, [implode(', ', $query->columns)]);
+        $parts = \array_merge($parts, [\implode(', ', $query->columns)]);
     }
 
     /**
@@ -36,7 +36,7 @@ final class SelectQueryStringifier
     private static function buildFrom(SelectQueryBuilder $query, array &$parts)
     {
         if (null !== $query->from) {
-            $parts = array_merge($parts, ['FROM', $query->from]);
+            $parts = \array_merge($parts, ['FROM', $query->from]);
         }
     }
 
@@ -48,9 +48,9 @@ final class SelectQueryStringifier
     {
         if ([] !== $query->joins) {
             foreach ($query->joins as $table => $join) {
-                $str = sprintf('%s %s', $join['t'], $table);
+                $str = \sprintf('%s %s', $join['t'], $table);
                 if (null !== $join['c']) {
-                    $str .= sprintf(' ON %s', $join['c']);
+                    $str .= \sprintf(' ON %s', $join['c']);
                 }
                 $parts[] = $str;
             }
@@ -64,7 +64,7 @@ final class SelectQueryStringifier
     private static function buildWhere(SelectQueryBuilder $query, array &$parts)
     {
         if (null !== $query->where) {
-            $parts = array_merge($parts, ['WHERE', (string) $query->where]);
+            $parts = \array_merge($parts, ['WHERE', (string) $query->where]);
         }
     }
 
@@ -75,7 +75,7 @@ final class SelectQueryStringifier
     private static function buildGroupBy(SelectQueryBuilder $query, array &$parts)
     {
         if ([] !== $query->groupBy) {
-            $parts = array_merge($parts, ['GROUP BY'], [implode(', ', $query->groupBy)]);
+            $parts = \array_merge($parts, ['GROUP BY'], [implode(', ', $query->groupBy)]);
         }
     }
 
@@ -86,7 +86,7 @@ final class SelectQueryStringifier
     private static function buildHaving(SelectQueryBuilder $query, array &$parts)
     {
         if (null !== $query->having) {
-            $parts = array_merge($parts, ['HAVING', (string) $query->having]);
+            $parts = \array_merge($parts, ['HAVING', (string) $query->having]);
         }
     }
 
@@ -97,7 +97,7 @@ final class SelectQueryStringifier
     private static function buildOrderBy(SelectQueryBuilder $query, array &$parts)
     {
         if ([] !== $query->orderBy) {
-            $parts = array_merge($parts, ['ORDER BY'], [implode(', ', $query->orderBy)]);
+            $parts = \array_merge($parts, ['ORDER BY'], [implode(', ', $query->orderBy)]);
         }
     }
 
@@ -108,7 +108,7 @@ final class SelectQueryStringifier
     private static function buildLimit(SelectQueryBuilder $query, array &$parts)
     {
         if (null !== $query->limit) {
-            $parts[] = sprintf('LIMIT %d', $query->limit);
+            $parts[] = \sprintf('LIMIT %d', $query->limit);
         }
     }
 
@@ -119,7 +119,7 @@ final class SelectQueryStringifier
     private static function buildOffset(SelectQueryBuilder $query, array &$parts)
     {
         if (null !== $query->offset) {
-            $parts[] = sprintf('OFFSET %d', $query->offset);
+            $parts[] = \sprintf('OFFSET %d', $query->offset);
         }
     }
 
@@ -139,6 +139,6 @@ final class SelectQueryStringifier
         self::buildOrderBy($query, $parts);
         self::buildLimit($query, $parts);
         self::buildOffset($query, $parts);
-        return implode(' ', $parts) . $query->end;
+        return \implode(' ', $parts) . $query->end;
     }
 }

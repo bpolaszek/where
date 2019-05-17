@@ -31,7 +31,7 @@ final class CompositeExpression extends Expression
      */
     public function __toString(): string
     {
-        return implode("{$this->operator}", array_map(function (Expression $expression) {
+        return \implode("{$this->operator}", \array_map(function (Expression $expression) {
             return (string) $expression;
         }, $this->expressions));
     }
@@ -44,7 +44,7 @@ final class CompositeExpression extends Expression
         $generator = function (Expression ...$expressions) {
             foreach ($expressions as $expression) {
                 foreach ($expression->getValues() as $key => $value) {
-                    if (is_numeric($key)) {
+                    if (\is_numeric($key)) {
                         yield $value;
                     } else {
                         yield $key => $value;
@@ -53,6 +53,6 @@ final class CompositeExpression extends Expression
             }
         };
 
-        return iterator_to_array($generator(...$this->expressions));
+        return \iterator_to_array($generator(...$this->expressions));
     }
 }

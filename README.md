@@ -58,6 +58,7 @@ $where = where('country IN (?, ?)', ['FRA', 'UK'])
 
 print((string) $where);
 print_r($where->getValues());
+print_r($where->preview());
 ```
 Outputs:
 ```mysql
@@ -72,6 +73,9 @@ Array
     [3] => 100000
 )
 
+```
+```mysql
+country IN ('FRA', 'UK') AND NOT (continent = 'Europe' OR population < 100000)
 ```
 
 Every function `where()`, `group()`, `not()` accepts either an already instanciated **Expression** object, or a string and some optionnal parameters.
@@ -116,7 +120,7 @@ $select = select('b.id', 'b.name  AS book_name', 'a.name AS author_name')
         )
     );
 print_r((string) $select); // The SQL string
-print_r($select->getValues()); // The SQL parameters to bind
+print_r($select->preview()); // The SQL parameters to bind
 ```
 
 ```mysql
@@ -126,6 +130,17 @@ INNER JOIN authors as a ON a.id = b.author_id
 WHERE (b.series = ? OR b.series IN (?, ?)) 
 AND b.published_at >= ? 
 AND NOT b.reviewed_at BETWEEN ? AND ? 
+ORDER BY YEAR(b.published_at) DESC, MONTH(b.published_at) DESC, b.name 
+LIMIT 10;
+```
+
+```mysql
+SELECT b.id, b.name  AS book_name, a.name AS author_name 
+FROM books as b 
+INNER JOIN authors as a ON a.id = b.author_id 
+WHERE (b.series = 'Harry Potter' OR b.series IN ('A Song of Ice and Fire', 'Game of Thrones')) 
+AND b.published_at >= '2010-01-01 00:00:00' 
+AND NOT b.reviewed_at BETWEEN '2016-01-01 00:00:00' AND '2016-01-31 23:59:59' 
 ORDER BY YEAR(b.published_at) DESC, MONTH(b.published_at) DESC, b.name 
 LIMIT 10;
 ```

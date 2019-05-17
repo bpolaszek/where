@@ -6,11 +6,6 @@ namespace BenTools\Where\Expression;
 final class GroupExpression extends Expression
 {
     /**
-     * @var Expression
-     */
-    private $expression;
-
-    /**
      * GroupExpression constructor.
      * @param Expression $expression
      */
@@ -24,7 +19,7 @@ final class GroupExpression extends Expression
      */
     public function __toString(): string
     {
-        return sprintf('(%s)', $this->expression);
+        return \sprintf('(%s)', $this->expression);
     }
 
     /**

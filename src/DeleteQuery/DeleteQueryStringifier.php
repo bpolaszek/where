@@ -11,8 +11,7 @@ final class DeleteQueryStringifier
      */
     private static function initBuild(DeleteQueryBuilder $query): array
     {
-        $parts = array_merge([$query->mainKeyword], $query->flags);
-        return $parts;
+        return \array_merge([$query->mainKeyword], $query->flags);
     }
 
     /**
@@ -22,7 +21,7 @@ final class DeleteQueryStringifier
     private static function buildTables(DeleteQueryBuilder $query, array &$parts)
     {
         if ([] !== $query->tables && null !== $query->tables) {
-            $parts = array_merge($parts, [implode(', ', $query->tables)]);
+            $parts = \array_merge($parts, [implode(', ', $query->tables)]);
         }
     }
 
@@ -33,7 +32,7 @@ final class DeleteQueryStringifier
     private static function buildFrom(DeleteQueryBuilder $query, array &$parts)
     {
         if (null !== $query->from) {
-            $parts = array_merge($parts, ['FROM', $query->from]);
+            $parts = \array_merge($parts, ['FROM', $query->from]);
         }
     }
 
@@ -45,7 +44,7 @@ final class DeleteQueryStringifier
     {
         if ([] !== $query->partitions) {
             $parts[] = 'PARTITION';
-            $parts[] = sprintf('(%s)', implode(', ', $query->partitions));
+            $parts[] = sprintf('(%s)', \implode(', ', $query->partitions));
         }
     }
 
@@ -57,9 +56,9 @@ final class DeleteQueryStringifier
     {
         if ([] !== $query->joins) {
             foreach ($query->joins as $table => $join) {
-                $str = sprintf('%s %s', $join['t'], $table);
+                $str = \sprintf('%s %s', $join['t'], $table);
                 if (null !== $join['c']) {
-                    $str .= sprintf(' ON %s', $join['c']);
+                    $str .= \sprintf(' ON %s', $join['c']);
                 }
                 $parts[] = $str;
             }
@@ -73,7 +72,7 @@ final class DeleteQueryStringifier
     private static function buildWhere(DeleteQueryBuilder $query, array &$parts)
     {
         if (null !== $query->where) {
-            $parts = array_merge($parts, ['WHERE', (string) $query->where]);
+            $parts = \array_merge($parts, ['WHERE', (string) $query->where]);
         }
     }
 
@@ -85,7 +84,7 @@ final class DeleteQueryStringifier
     private static function buildOrderBy(DeleteQueryBuilder $query, array &$parts)
     {
         if ([] !== $query->orderBy) {
-            $parts = array_merge($parts, ['ORDER BY'], [implode(', ', $query->orderBy)]);
+            $parts = \array_merge($parts, ['ORDER BY'], [\implode(', ', $query->orderBy)]);
         }
     }
 
@@ -96,7 +95,7 @@ final class DeleteQueryStringifier
     private static function buildLimit(DeleteQueryBuilder $query, array &$parts)
     {
         if (null !== $query->limit) {
-            $parts[] = sprintf('LIMIT %d', $query->limit);
+            $parts[] = \sprintf('LIMIT %d', $query->limit);
         }
     }
 
@@ -114,6 +113,6 @@ final class DeleteQueryStringifier
         self::buildWhere($query, $parts);
         self::buildOrderBy($query, $parts);
         self::buildLimit($query, $parts);
-        return implode(' ', $parts) . $query->end;
+        return \implode(' ', $parts) . $query->end;
     }
 }

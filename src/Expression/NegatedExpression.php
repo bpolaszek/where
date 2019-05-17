@@ -6,11 +6,6 @@ namespace BenTools\Where\Expression;
 final class NegatedExpression extends Expression
 {
     /**
-     * @var Expression
-     */
-    protected $expression;
-
-    /**
      * NegatedExpression constructor.
      * @param Expression $expression
      */

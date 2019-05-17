@@ -5,6 +5,9 @@ namespace BenTools\Where\Helper;
 use BenTools\Where\Expression\Expression;
 use function BenTools\Where\where;
 
+/**
+ * @internal
+ */
 final class CaseHelper extends Expression
 {
 
@@ -47,7 +50,7 @@ final class CaseHelper extends Expression
      */
     public function when($expression, ...$values): self
     {
-        if (count($this->when) !== count($this->then)) {
+        if (\count($this->when) !== \count($this->then)) {
             throw new \RuntimeException("Mising a 'then' somewhere.");
         }
         if (true === $this->lock) {
@@ -66,7 +69,7 @@ final class CaseHelper extends Expression
      */
     public function then($expression, ...$values): self
     {
-        if (count($this->when) !== count($this->then) + 1) {
+        if (\count($this->when) !== \count($this->then) + 1) {
             throw new \RuntimeException("Mising a 'when' somewhere.");
         }
         if (true === $this->lock) {
@@ -130,7 +133,7 @@ final class CaseHelper extends Expression
 
         $parts[] = 'END';
 
-        return implode(' ', $parts);
+        return \implode(' ', $parts);
     }
 
     /**
@@ -156,7 +159,7 @@ final class CaseHelper extends Expression
             $values[] = $this->else->getValues();
         }
 
-        return array_merge(...$values);
+        return \array_merge(...$values);
     }
 
     /**

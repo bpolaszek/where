@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace BenTools\Where\InsertQuery;
 
+use BenTools\Where\Helper\Previewer;
+
 /**
  * Class InsertQueryBuilder
  *
@@ -17,7 +19,6 @@ namespace BenTools\Where\InsertQuery;
  */
 final class InsertQueryBuilder
 {
-
     /**
      * @var string
      */
@@ -138,9 +139,9 @@ final class InsertQueryBuilder
     public function withAddedFlags(string ...$flags): self
     {
         $clone = clone $this;
-        $existingFlags = array_map('strtoupper', $clone->flags);
+        $existingFlags = \array_map('strtoupper', $clone->flags);
         foreach ($flags as $flag) {
-            if (!in_array(strtoupper($flag), $existingFlags, true)) {
+            if (!\in_array(\strtoupper($flag), $existingFlags, true)) {
                 $clone->flags[] = $flag;
             }
         }
@@ -190,16 +191,16 @@ final class InsertQueryBuilder
         if (empty($this->values)) {
             return $value;
         }
-        $keys = array_keys($this->values[0]);
-        $valueKeys = array_keys($value);
+        $keys = \array_keys($this->values[0]);
+        $valueKeys = \array_keys($value);
         if ($valueKeys !== $keys) {
-            if (count($keys) !== count($valueKeys)) {
+            if (\count($keys) !== count($valueKeys)) {
                 throw new \InvalidArgumentException("Invalid value.");
             }
-            uksort($value, function ($key1, $key2) use ($keys) {
-                return array_search($key1, $keys) <=> array_search($key2, $keys);
+            \uksort($value, function ($key1, $key2) use ($keys) {
+                return \array_search($key1, $keys) <=> \array_search($key2, $keys);
             });
-            $valueKeys = array_keys($value);
+            $valueKeys = \array_keys($value);
             if ($valueKeys !== $keys) {
                 throw new \InvalidArgumentException("Invalid value.");
             }
@@ -217,14 +218,6 @@ final class InsertQueryBuilder
     }
 
     /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return InsertQueryStringifier::stringify($this);
-    }
-
-    /**
      * Split into multiple INSERT statements.
      *
      * @param int $max
@@ -233,13 +226,29 @@ final class InsertQueryBuilder
     public function split(int $max): iterable
     {
         $pos = 0;
-        $total = count($this->values);
+        $total = \count($this->values);
         while ($pos < $total) {
             $clone = clone $this;
-            $clone->values = array_slice($this->values, $pos, $max);
+            $clone->values = \array_slice($this->values, $pos, $max);
             $pos += $max;
             yield $clone;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumns()
+    {
+        return $this->columns ?? \array_keys($this->values[0] ?? []);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return InsertQueryStringifier::stringify($this);
     }
 
     /**
@@ -250,28 +259,28 @@ final class InsertQueryBuilder
         $values = [[]];
         $columns = $this->getColumns();
         foreach ($this->values as $value) {
-            $valueKeys = array_keys($value);
+            $valueKeys = \array_keys($value);
             if ($valueKeys !== $columns) {
-                $value = array_intersect_key($value, array_combine($columns, array_fill(0, count($columns), null)));
-                $valueKeys = array_keys($value);
+                $value = \array_intersect_key($value, \array_combine($columns, \array_fill(0, \count($columns), null)));
+                $valueKeys = \array_keys($value);
                 if ($valueKeys !== $columns) {
-                    uksort($value, function ($key1, $key2) use ($columns) {
-                        return array_search($key1, $columns) <=> array_search($key2, $columns);
+                    \uksort($value, function ($key1, $key2) use ($columns) {
+                        return \array_search($key1, $columns) <=> \array_search($key2, $columns);
                     });
                 }
             }
-            $values[] = array_values($value);
+            $values[] = \array_values($value);
         }
 
-        return array_merge(...$values);
+        return \array_merge(...$values);
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getColumns()
+    public function preview(): string
     {
-        return $this->columns ?? array_keys($this->values[0] ?? []);
+        return Previewer::preview((string) $this, $this->getValues());
     }
 
     /**
@@ -283,8 +292,8 @@ final class InsertQueryBuilder
      */
     public function __get($property)
     {
-        if (!property_exists($this, $property)) {
-            throw new \InvalidArgumentException(sprintf('Property %s::$%s does not exist.', __CLASS__, $property));
+        if (!\property_exists($this, $property)) {
+            throw new \InvalidArgumentException(\sprintf('Property %s::$%s does not exist.', __CLASS__, $property));
         }
         return $this->{$property};
     }

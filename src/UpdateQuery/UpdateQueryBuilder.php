@@ -3,6 +3,7 @@
 namespace BenTools\Where\UpdateQuery;
 
 use BenTools\Where\Expression\Expression;
+use BenTools\Where\Helper\Previewer;
 use function BenTools\Where\valuesOf;
 
 /**
@@ -116,9 +117,9 @@ final class UpdateQueryBuilder
     public function withAddedFlags(string ...$flags): self
     {
         $clone = clone $this;
-        $existingFlags = array_map('strtoupper', $clone->flags);
+        $existingFlags = \array_map('strtoupper', $clone->flags);
         foreach ($flags as $flag) {
-            if (!in_array(strtoupper($flag), $existingFlags, true)) {
+            if (!\in_array(\strtoupper($flag), $existingFlags, true)) {
                 $clone->flags[] = $flag;
             }
         }
@@ -395,7 +396,7 @@ final class UpdateQueryBuilder
     public function andOrderBy(string ...$orderBy): self
     {
         $clone = clone $this;
-        $clone->orderBy = array_merge($clone->orderBy, $orderBy);
+        $clone->orderBy = \array_merge($clone->orderBy, $orderBy);
         return $clone;
     }
 
@@ -434,10 +435,18 @@ final class UpdateQueryBuilder
      */
     public function getValues(): array
     {
-        $expressions = array_filter(array_merge(array_column($this->joins, 'c'), [$this->set, $this->where]), function ($expression) {
+        $expressions = \array_filter(\array_merge(\array_column($this->joins, 'c'), [$this->set, $this->where]), function ($expression) {
             return $expression instanceof Expression;
         });
         return valuesOf(...$expressions);
+    }
+
+    /**
+     * @return string
+     */
+    public function preview(): string
+    {
+        return Previewer::preview((string) $this, $this->getValues());
     }
 
     /**
@@ -449,8 +458,8 @@ final class UpdateQueryBuilder
      */
     public function __get($property)
     {
-        if (!property_exists($this, $property)) {
-            throw new \InvalidArgumentException(sprintf('Property %s::$%s does not exist.', __CLASS__, $property));
+        if (!\property_exists($this, $property)) {
+            throw new \InvalidArgumentException(\sprintf('Property %s::$%s does not exist.', __CLASS__, $property));
         }
         return $this->{$property};
     }

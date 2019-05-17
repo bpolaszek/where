@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace BenTools\Where\SelectQuery;
 
 use BenTools\Where\Expression\Expression;
+use BenTools\Where\Helper\Previewer;
 use function BenTools\Where\valuesOf;
 
 /**
@@ -25,7 +26,6 @@ use function BenTools\Where\valuesOf;
  */
 final class SelectQueryBuilder
 {
-
     /**
      * @var string
      */
@@ -98,7 +98,7 @@ final class SelectQueryBuilder
     public static function make(...$columns): self
     {
         $select = new self;
-        if (0 !== func_num_args()) {
+        if (0 !== \func_num_args()) {
             $select->validateColumns(...$columns);
             $select->columns = $columns;
         }
@@ -112,11 +112,11 @@ final class SelectQueryBuilder
     private function validateColumns(...$columns)
     {
         foreach ($columns as $column) {
-            if (!($column instanceof Expression || is_scalar($column))) {
+            if (!($column instanceof Expression || \is_scalar($column))) {
                 throw new \InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         "Expected string or Expression, got %s",
-                        is_object($column) ? get_class($column) : gettype($column)
+                        \is_object($column) ? \get_class($column) : \gettype($column)
                     )
                 );
             }
@@ -154,7 +154,7 @@ final class SelectQueryBuilder
     {
         $this->validateColumns(...$columns);
         $clone = clone $this;
-        $clone->columns = array_merge($clone->columns, $columns);
+        $clone->columns = \array_merge($clone->columns, $columns);
         return $clone;
     }
 
@@ -176,9 +176,9 @@ final class SelectQueryBuilder
     public function withAddedFlags(string ...$flags): self
     {
         $clone = clone $this;
-        $existingFlags = array_map('strtoupper', $clone->flags);
+        $existingFlags = \array_map('strtoupper', $clone->flags);
         foreach ($flags as $flag) {
-            if (!in_array(strtoupper($flag), $existingFlags, true)) {
+            if (!\in_array(\strtoupper($flag), $existingFlags, true)) {
                 $clone->flags[] = $flag;
             }
         }
@@ -394,7 +394,7 @@ final class SelectQueryBuilder
     public function where($expression = null, ...$values): self
     {
         $clone = clone $this;
-        if (1 === func_num_args() && null === func_get_arg(0)) {
+        if (1 === \func_num_args() && null === \func_get_arg(0)) {
             $clone->where = null;
             return $clone;
         }
@@ -441,7 +441,7 @@ final class SelectQueryBuilder
     public function groupBy(?string ...$groupBy): self
     {
         $clone = clone $this;
-        if (1 === func_num_args() && null === func_get_arg(0)) {
+        if (1 === \func_num_args() && null === \func_get_arg(0)) {
             $clone->groupBy = [];
             return $clone;
         }
@@ -456,7 +456,7 @@ final class SelectQueryBuilder
     public function andGroupBy(string ...$groupBy): self
     {
         $clone = clone $this;
-        $clone->groupBy = array_merge($clone->groupBy, $groupBy);
+        $clone->groupBy = \array_merge($clone->groupBy, $groupBy);
         return $clone;
     }
 
@@ -469,7 +469,7 @@ final class SelectQueryBuilder
     public function having($expression = null, ...$values): self
     {
         $clone = clone $this;
-        if (1 === func_num_args() && null === func_get_arg(0)) {
+        if (1 === \func_num_args() && null === \func_get_arg(0)) {
             $clone->having = null;
             return $clone;
         }
@@ -516,7 +516,7 @@ final class SelectQueryBuilder
     public function orderBy(?string ...$orderBy): self
     {
         $clone = clone $this;
-        if (1 === func_num_args() && null === func_get_arg(0)) {
+        if (1 === \func_num_args() && null === \func_get_arg(0)) {
             $clone->orderBy = [];
             return $clone;
         }
@@ -531,7 +531,7 @@ final class SelectQueryBuilder
     public function andOrderBy(string ...$orderBy): self
     {
         $clone = clone $this;
-        $clone->orderBy = array_merge($clone->orderBy, $orderBy);
+        $clone->orderBy = \array_merge($clone->orderBy, $orderBy);
         return $clone;
     }
 
@@ -569,17 +569,6 @@ final class SelectQueryBuilder
     }
 
     /**
-     * @return array
-     */
-    public function getValues(): array
-    {
-        $expressions = array_filter(array_merge($this->columns, array_column($this->joins, 'c'), [$this->where, $this->having]), function ($expression) {
-            return $expression instanceof Expression;
-        });
-        return valuesOf(...$expressions);
-    }
-
-    /**
      * Split current query into multiple sub-queries (with OFFSET and LIMIT).
      *
      * @param int $buffer
@@ -603,6 +592,25 @@ final class SelectQueryBuilder
     }
 
     /**
+     * @return array
+     */
+    public function getValues(): array
+    {
+        $expressions = \array_filter(\array_merge($this->columns, \array_column($this->joins, 'c'), [$this->where, $this->having]), function ($expression) {
+            return $expression instanceof Expression;
+        });
+        return valuesOf(...$expressions);
+    }
+
+    /**
+     * @return string
+     */
+    public function preview(): string
+    {
+        return Previewer::preview((string) $this, $this->getValues());
+    }
+
+    /**
      * Read-only properties.
      *
      * @param $property
@@ -611,8 +619,8 @@ final class SelectQueryBuilder
      */
     public function __get($property)
     {
-        if (!property_exists($this, $property)) {
-            throw new \InvalidArgumentException(sprintf('Property %s::$%s does not exist.', __CLASS__, $property));
+        if (!\property_exists($this, $property)) {
+            throw new \InvalidArgumentException(\sprintf('Property %s::$%s does not exist.', __CLASS__, $property));
         }
         return $this->{$property};
     }

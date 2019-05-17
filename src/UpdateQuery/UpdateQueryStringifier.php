@@ -7,8 +7,7 @@ class UpdateQueryStringifier
 
     private static function initBuild(UpdateQueryBuilder $query): array
     {
-        $parts = array_merge([$query->mainKeyword], $query->flags);
-        return $parts;
+        return \array_merge([$query->mainKeyword], $query->flags);
     }
 
     /**
@@ -18,7 +17,7 @@ class UpdateQueryStringifier
     private static function buildFrom(UpdateQueryBuilder $query, array &$parts)
     {
         if (null !== $query->from) {
-            $parts = array_merge($parts, [$query->from]);
+            $parts = \array_merge($parts, [$query->from]);
         }
     }
 
@@ -30,9 +29,9 @@ class UpdateQueryStringifier
     {
         if ([] !== $query->joins) {
             foreach ($query->joins as $table => $join) {
-                $str = sprintf('%s %s', $join['t'], $table);
+                $str = \sprintf('%s %s', $join['t'], $table);
                 if (null !== $join['c']) {
-                    $str .= sprintf(' ON %s', $join['c']);
+                    $str .= \sprintf(' ON %s', $join['c']);
                 }
                 $parts[] = $str;
             }
@@ -46,7 +45,7 @@ class UpdateQueryStringifier
     private static function buildSet(UpdateQueryBuilder $query, array &$parts)
     {
         if (null !== $query->set) {
-            $parts = array_merge($parts, ['SET', (string) $query->set]);
+            $parts = \array_merge($parts, ['SET', (string) $query->set]);
         }
     }
 
@@ -57,7 +56,7 @@ class UpdateQueryStringifier
     private static function buildWhere(UpdateQueryBuilder $query, array &$parts)
     {
         if (null !== $query->where) {
-            $parts = array_merge($parts, ['WHERE', (string) $query->where]);
+            $parts = \array_merge($parts, ['WHERE', (string) $query->where]);
         }
     }
 
@@ -68,7 +67,7 @@ class UpdateQueryStringifier
     private static function buildOrderBy(UpdateQueryBuilder $query, array &$parts)
     {
         if ([] !== $query->orderBy) {
-            $parts = array_merge($parts, ['ORDER BY'], [implode(', ', $query->orderBy)]);
+            $parts = \array_merge($parts, ['ORDER BY'], [implode(', ', $query->orderBy)]);
         }
     }
 
@@ -79,7 +78,7 @@ class UpdateQueryStringifier
     private static function buildLimit(UpdateQueryBuilder $query, array &$parts)
     {
         if (null !== $query->limit) {
-            $parts[] = sprintf('LIMIT %d', $query->limit);
+            $parts[] = \sprintf('LIMIT %d', $query->limit);
         }
     }
 
@@ -96,6 +95,6 @@ class UpdateQueryStringifier
         self::buildWhere($query, $parts);
         self::buildOrderBy($query, $parts);
         self::buildLimit($query, $parts);
-        return implode(' ', $parts) . $query->end;
+        return \implode(' ', $parts) . $query->end;
     }
 }

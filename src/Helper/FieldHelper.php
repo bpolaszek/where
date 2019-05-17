@@ -7,6 +7,9 @@ use BenTools\Where\Expression\Expression;
 use function BenTools\Where\placeholders;
 use function BenTools\Where\where;
 
+/**
+ * @internal
+ */
 final class FieldHelper
 {
     /**
@@ -28,7 +31,7 @@ final class FieldHelper
      */
     public function isNull(): Expression
     {
-        return where(sprintf('%s IS NULL', $this->field));
+        return where(\sprintf('%s IS NULL', $this->field));
     }
 
     /**
@@ -37,7 +40,7 @@ final class FieldHelper
      */
     public function isNotNull(): Expression
     {
-        return where(sprintf('%s IS NOT NULL', $this->field));
+        return where(\sprintf('%s IS NOT NULL', $this->field));
     }
 
     /**
@@ -46,7 +49,7 @@ final class FieldHelper
      */
     public function isTrue(): Expression
     {
-        return where(sprintf('%s = TRUE', $this->field));
+        return where(\sprintf('%s = TRUE', $this->field));
     }
 
     /**
@@ -55,7 +58,7 @@ final class FieldHelper
      */
     public function isFalse(): Expression
     {
-        return where(sprintf('%s = FALSE', $this->field));
+        return where(\sprintf('%s = FALSE', $this->field));
     }
 
     /**
@@ -68,7 +71,7 @@ final class FieldHelper
     public function in(array $values, ?string $placeholder = '?', string $glue = ', '): Expression
     {
         $expression = '%s IN (%s)';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...array_values($values)) : where(sprintf($expression, $this->field, implode(', ', $values)));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...\array_values($values)) : where(\sprintf($expression, $this->field, \implode(', ', $values)));
     }
 
     /**
@@ -81,7 +84,7 @@ final class FieldHelper
     public function notIn(array $values, ?string $placeholder = '?', string $glue = ', '): Expression
     {
         $expression = '%s NOT IN (%s)';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...array_values($values)) : where(sprintf($expression, $this->field, implode(', ', $values)));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...\array_values($values)) : where(\sprintf($expression, $this->field, \implode(', ', $values)));
     }
 
     /**
@@ -93,7 +96,7 @@ final class FieldHelper
     public function equals($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s = %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -105,7 +108,7 @@ final class FieldHelper
     public function notEquals($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s <> %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -117,7 +120,7 @@ final class FieldHelper
     public function lt($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s < %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -129,7 +132,7 @@ final class FieldHelper
     public function lte($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s <= %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -141,7 +144,7 @@ final class FieldHelper
     public function gt($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s > %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -153,7 +156,7 @@ final class FieldHelper
     public function gte($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s >= %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -166,7 +169,7 @@ final class FieldHelper
     public function between($start, $end, ?string $placeholder = '?'): Expression
     {
         $expression = '%s BETWEEN %s AND %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end) : where(sprintf($expression, $this->field, $start, $end));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end) : where(\sprintf($expression, $this->field, $start, $end));
     }
 
     /**
@@ -179,7 +182,7 @@ final class FieldHelper
     public function notBetween($start, $end, ?string $placeholder = '?'): Expression
     {
         $expression = '%s NOT BETWEEN %s AND %s';
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end) : where(sprintf($expression, $this->field, $start, $end));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end) : where(\sprintf($expression, $this->field, $start, $end));
     }
 
     /**
@@ -193,7 +196,7 @@ final class FieldHelper
     {
         $expression = '%s LIKE %s';
         $value = $surroundWith . $value . $surroundWith;
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -207,7 +210,7 @@ final class FieldHelper
     {
         $expression = '%s NOT LIKE %s';
         $value = $surroundWith . $value . $surroundWith;
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -221,7 +224,7 @@ final class FieldHelper
     {
         $expression = '%s LIKE %s';
         $value = $value . $surroundWith;
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -235,7 +238,7 @@ final class FieldHelper
     {
         $expression = '%s NOT LIKE %s';
         $value = $value . $surroundWith;
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -249,7 +252,7 @@ final class FieldHelper
     {
         $expression = '%s LIKE %s';
         $value = $surroundWith . $value;
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 
     /**
@@ -263,6 +266,6 @@ final class FieldHelper
     {
         $expression = '%s NOT LIKE %s';
         $value = $surroundWith . $value;
-        return null !== $placeholder ? where(sprintf($expression, $this->field, $placeholder), $value) : where(sprintf($expression, $this->field, $value));
+        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
     }
 }

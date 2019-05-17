@@ -12,8 +12,7 @@ class InsertQueryStringifier
      */
     private static function initBuild(InsertQueryBuilder $query): array
     {
-        $parts = array_merge([$query->mainKeyword], $query->flags);
-        return $parts;
+        return \array_merge([$query->mainKeyword], $query->flags);
     }
 
     /**
@@ -23,7 +22,7 @@ class InsertQueryStringifier
     private static function buildTable(InsertQueryBuilder $insertQuery, array &$parts)
     {
         if (null !== $insertQuery->table) {
-            $parts[] = sprintf('INTO %s', $insertQuery->escape($insertQuery->table));
+            $parts[] = \sprintf('INTO %s', $insertQuery->escape($insertQuery->table));
         }
     }
 
@@ -35,7 +34,7 @@ class InsertQueryStringifier
     {
         $columns = $insertQuery->getColumns();
         if (null !== $columns) {
-            $parts[] = sprintf('(%s)', implode(', ', array_map([$insertQuery, 'escape'], $columns)));
+            $parts[] = \sprintf('(%s)', \implode(', ', \array_map([$insertQuery, 'escape'], $columns)));
         }
     }
 
@@ -49,12 +48,12 @@ class InsertQueryStringifier
 
         $parts[] = 'VALUES';
 
-        $nbColumns = count($columns);
-        $nbValues = count($insertQuery->values);
-        $pattern = sprintf('(%s)', implode(', ', array_fill(0, $nbColumns, '?')));
-        $valueParts = array_fill(0, $nbValues, $pattern);
+        $nbColumns = \count($columns);
+        $nbValues = \count($insertQuery->values);
+        $pattern = \sprintf('(%s)', \implode(', ', \array_fill(0, $nbColumns, '?')));
+        $valueParts = \array_fill(0, $nbValues, $pattern);
 
-        $parts[] = implode(', ', $valueParts);
+        $parts[] = \implode(', ', $valueParts);
     }
 
     /**
@@ -67,11 +66,11 @@ class InsertQueryStringifier
         if ([] !== $duplicateConditions && null !== $duplicateConditions) {
             $parts[] = 'ON DUPLICATE KEY UPDATE';
             $updateParts = [];
-            array_walk($duplicateConditions, function ($value, $key) use ($insertQuery, &$updateParts) {
-                $updateParts[] = sprintf('%s = %s', $insertQuery->escape($key), $value);
+            \array_walk($duplicateConditions, function ($value, $key) use ($insertQuery, &$updateParts) {
+                $updateParts[] = \sprintf('%s = %s', $insertQuery->escape($key), $value);
             });
 
-            $parts[] = implode(', ', $updateParts);
+            $parts[] = \implode(', ', $updateParts);
         }
     }
 
@@ -86,6 +85,6 @@ class InsertQueryStringifier
         self::buildColumns($insertQuery, $parts);
         self::buildValues($insertQuery, $parts);
         self::buildDuplicateConditions($insertQuery, $parts);
-        return implode(' ', $parts) . $insertQuery->end;
+        return \implode(' ', $parts) . $insertQuery->end;
     }
 }
