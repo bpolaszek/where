@@ -15,7 +15,7 @@ use BenTools\Where\UpdateQuery\UpdateQueryBuilder;
 
 /**
  * @param string|Expression $expression
- * @param array ...$values
+ * @param array             ...$values
  * @return Expression|Condition
  * @throws \InvalidArgumentException
  */
@@ -26,7 +26,7 @@ function where($expression, ...$values): Expression
 
 /**
  * @param string|Expression $expression
- * @param array ...$values
+ * @param array             ...$values
  * @return GroupExpression
  * @throws \InvalidArgumentException
  */
@@ -37,7 +37,7 @@ function group($expression, ...$values): GroupExpression
 
 /**
  * @param string|Expression $expression
- * @param array ...$values
+ * @param array             ...$values
  * @return NegatedExpression
  * @throws \InvalidArgumentException
  */
@@ -93,10 +93,73 @@ function update(string $table): UpdateQueryBuilder
  * @param string $placeholder
  * @param string $glue
  * @return string
+ * @internal
  */
 function placeholders(array $values, string $placeholder = '?', string $glue = ', '): string
 {
-    return implode($glue, array_fill(0, count($values), $placeholder));
+    return \implode($glue, \array_fill(0, \count($values), $placeholder));
+}
+
+/**
+ * @param array  $values
+ * @return array|false
+ * @internal
+ */
+function random_placeholders(array $values)
+{
+    $placeholders = \array_map(
+        function () {
+            return random_string();
+        },
+        $values
+    );
+
+    return $placeholders;
+}
+
+/**
+ * @param int $length
+ * @return string
+ * @throws \Exception
+ * @internal
+ */
+function random_string(int $length = 8)
+{
+    $chars = [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+    ];
+
+    $string = '';
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $chars[\random_int(0, 25)];
+    }
+
+    return $string;
 }
 
 /**

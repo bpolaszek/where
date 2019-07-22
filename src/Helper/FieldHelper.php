@@ -5,6 +5,8 @@ namespace BenTools\Where\Helper;
 
 use BenTools\Where\Expression\Expression;
 use function BenTools\Where\placeholders;
+use function BenTools\Where\random_placeholders;
+use function BenTools\Where\random_string;
 use function BenTools\Where\where;
 
 /**
@@ -71,7 +73,35 @@ final class FieldHelper
     public function in(array $values, ?string $placeholder = '?', string $glue = ', '): Expression
     {
         $expression = '%s IN (%s)';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...\array_values($values)) : where(\sprintf($expression, $this->field, \implode(', ', $values)));
+
+        if ('?' === $placeholder) {
+            return where(\sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...\array_values($values));
+        }
+
+        if ('??' === $placeholder) {
+            $placeholders = random_placeholders($values);
+            $stringified = \sprintf(
+                $expression,
+                $this->field,
+                \implode(
+                    ', ',
+                    \array_map(
+                        function (string $placeholder) {
+                            return ':'.$placeholder;
+                        },
+                        $placeholders
+                    )
+                )
+            );
+
+            return where($stringified, \array_combine($placeholders, $values));
+        }
+
+        if (null !== $placeholder) {
+            throw new \InvalidArgumentException(\sprintf('Expected "?", "??" or null, got %s', $placeholder));
+        }
+
+        return where(\sprintf($expression, $this->field, \implode(', ', $values)));
     }
 
     /**
@@ -84,7 +114,35 @@ final class FieldHelper
     public function notIn(array $values, ?string $placeholder = '?', string $glue = ', '): Expression
     {
         $expression = '%s NOT IN (%s)';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...\array_values($values)) : where(\sprintf($expression, $this->field, \implode(', ', $values)));
+
+        if ('?' === $placeholder) {
+            return where(\sprintf($expression, $this->field, placeholders($values, $placeholder, $glue)), ...\array_values($values));
+        }
+
+        if ('??' === $placeholder) {
+            $placeholders = random_placeholders($values);
+            $stringified = \sprintf(
+                $expression,
+                $this->field,
+                \implode(
+                    ', ',
+                    \array_map(
+                        function (string $placeholder) {
+                            return ':'.$placeholder;
+                        },
+                        $placeholders
+                    )
+                )
+            );
+
+            return where($stringified, \array_combine($placeholders, $values));
+        }
+
+        if (null !== $placeholder) {
+            throw new \InvalidArgumentException(\sprintf('Expected "?", "??" or null, got %s', $placeholder));
+        }
+
+        return where(\sprintf($expression, $this->field, \implode(', ', $values)));
     }
 
     /**
@@ -96,7 +154,20 @@ final class FieldHelper
     public function equals($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s = %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -108,7 +179,20 @@ final class FieldHelper
     public function notEquals($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s <> %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -120,7 +204,20 @@ final class FieldHelper
     public function lt($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s < %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -132,7 +229,20 @@ final class FieldHelper
     public function lte($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s <= %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -144,7 +254,20 @@ final class FieldHelper
     public function gt($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s > %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -156,7 +279,20 @@ final class FieldHelper
     public function gte($value, ?string $placeholder = '?'): Expression
     {
         $expression = '%s >= %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -169,7 +305,28 @@ final class FieldHelper
     public function between($start, $end, ?string $placeholder = '?'): Expression
     {
         $expression = '%s BETWEEN %s AND %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end) : where(\sprintf($expression, $this->field, $start, $end));
+
+        if ('?' === $placeholder) {
+            return where(\sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end);
+        }
+
+        if ('??' === $placeholder) {
+            $placeholders = random_placeholders([$start, $end]);
+            $stringified = \sprintf(
+                $expression,
+                $this->field,
+                ':'.$placeholders[0],
+                ':'.$placeholders[1]
+            );
+
+            return where($stringified, \array_combine($placeholders, [$start, $end]));
+        }
+
+        if (null !== $placeholder) {
+            throw new \InvalidArgumentException(\sprintf('Expected "?", "??" or null, got %s', $placeholder));
+        }
+
+        return where(\sprintf($expression, $this->field, $start, $end));
     }
 
     /**
@@ -182,7 +339,28 @@ final class FieldHelper
     public function notBetween($start, $end, ?string $placeholder = '?'): Expression
     {
         $expression = '%s NOT BETWEEN %s AND %s';
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end) : where(\sprintf($expression, $this->field, $start, $end));
+
+        if ('?' === $placeholder) {
+            return where(\sprintf($expression, $this->field, $placeholder, $placeholder), $start, $end);
+        }
+
+        if ('??' === $placeholder) {
+            $placeholders = random_placeholders([$start, $end]);
+            $stringified = \sprintf(
+                $expression,
+                $this->field,
+                ':'.$placeholders[0],
+                ':'.$placeholders[1]
+            );
+
+            return where($stringified, \array_combine($placeholders, [$start, $end]));
+        }
+
+        if (null !== $placeholder) {
+            throw new \InvalidArgumentException(\sprintf('Expected "?", "??" or null, got %s', $placeholder));
+        }
+
+        return where(\sprintf($expression, $this->field, $start, $end));
     }
 
     /**
@@ -196,7 +374,20 @@ final class FieldHelper
     {
         $expression = '%s LIKE %s';
         $value = $surroundWith . $value . $surroundWith;
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -210,7 +401,20 @@ final class FieldHelper
     {
         $expression = '%s NOT LIKE %s';
         $value = $surroundWith . $value . $surroundWith;
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -224,7 +428,20 @@ final class FieldHelper
     {
         $expression = '%s LIKE %s';
         $value = $value . $surroundWith;
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -238,7 +455,20 @@ final class FieldHelper
     {
         $expression = '%s NOT LIKE %s';
         $value = $value . $surroundWith;
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -252,7 +482,20 @@ final class FieldHelper
     {
         $expression = '%s LIKE %s';
         $value = $surroundWith . $value;
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 
     /**
@@ -266,6 +509,19 @@ final class FieldHelper
     {
         $expression = '%s NOT LIKE %s';
         $value = $surroundWith . $value;
-        return null !== $placeholder ? where(\sprintf($expression, $this->field, $placeholder), $value) : where(\sprintf($expression, $this->field, $value));
+
+        switch ($placeholder) {
+            case '?':
+                return where(\sprintf($expression, $this->field, $placeholder), $value);
+            case '??':
+                $random = random_string();
+                return where(\sprintf($expression, $this->field, ':'.$random), [$random => $value]);
+            case null:
+                return where(\sprintf($expression, $this->field, $value));
+        }
+
+        $placeholder = \ltrim($placeholder, ':');
+
+        return where(\sprintf($expression, $this->field, ':'.$placeholder), [$placeholder => $value]);
     }
 }
